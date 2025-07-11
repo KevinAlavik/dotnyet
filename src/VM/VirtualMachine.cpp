@@ -131,6 +131,7 @@ namespace DotNyet::VM {
                         case Opcode::MUL:
                         case Opcode::DIV:
                         case Opcode::TOINT:
+                        case Opcode::SUBSTR:
                             break;
 
                         default:
@@ -426,6 +427,28 @@ namespace DotNyet::VM {
                         } else {
                             throw Core::RuntimeException("Unsupported type for TOINT");
                         }
+                        break;
+                    }
+
+                    case Opcode::SUBSTR: {
+                        logger.Debug("SUBSTR");
+                        auto end = stack.Pop();
+                        auto start = stack.Pop();
+                        auto strVal = stack.Pop();
+
+                        if (!strVal.IsString() || !start.IsInt() || !end.IsInt())
+                            throw Core::RuntimeException("SUBSTR expects a string and two integers");
+
+                        const std::string& str = strVal.AsString();
+                        int64_t startIdx = start.AsInt();
+                        int64_t endIdx = end.AsInt();
+
+                        if (startIdx < 0 || endIdx < 0 || startIdx >= str.size() || endIdx > str.size() || startIdx > endIdx)
+                            throw Core::RuntimeException("Invalid indices for SUBSTR");
+
+                        std::string result = str.substr(startIdx, endIdx - startIdx);
+                        logger.Debug("Result: '{}'", result);
+                        stack.Push(Types::Value(result));
                         break;
                     }
 

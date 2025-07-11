@@ -53,7 +53,10 @@ Opcodes are defined as 1-byte values in the `DotNyet::Bytecode::Opcode` enum. Th
 | `SUB`   | `0x61` | Pops two values, subtracts the second from the first, and pushes the result. | None                                                                     |
 | `MUL`   | `0x62` | Pops two values, multiplies them, and pushes the result.                     | None                                                                     |
 | `DIV`   | `0x61` | Pops two values, divides the second from the first, and pushes the result.   | None                                                                     |
-| `TOINT` | `0x70` | Pops a value from the stack then converts it to an int and pushes the result.| None                                                                     |
+| `TOINT` | `0x70` | Pops a value from the stack then converts it to an int and pushes the result.| 
+| `SUBSTR`| `0x71` | Pops a string, start index, and length from the stack; pushes the substring. | None     |
+
+
 
 ### Operand Details
 - **uint32_t**: A 4-byte unsigned integer, stored in little-endian byte order.

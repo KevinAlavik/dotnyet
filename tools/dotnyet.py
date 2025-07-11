@@ -5,26 +5,27 @@ from enum import Enum
 from typing import List, Dict, Tuple, Union
 
 class Opcode(Enum):
-    NOP   = 0x00
-    PUSH  = 0x01
-    POP   = 0x02
-    CMP   = 0x03
-    DEF   = 0x10
-    CALL  = 0x11
-    RET   = 0x12
-    STORE = 0x20
-    LOAD  = 0x21
-    JMP   = 0x30
-    JZ    = 0x31
-    JNZ   = 0x32
-    HALT  = 0x40
-    PRINT = 0x50
-    INPUT = 0x51
-    ADD   = 0x60
-    SUB   = 0x61
-    MUL   = 0x62
-    DIV   = 0x63
-    TOINT = 0x70
+    NOP    = 0x00
+    PUSH   = 0x01
+    POP    = 0x02
+    CMP    = 0x03
+    DEF    = 0x10
+    CALL   = 0x11
+    RET    = 0x12
+    STORE  = 0x20
+    LOAD   = 0x21
+    JMP    = 0x30
+    JZ     = 0x31
+    JNZ    = 0x32
+    HALT   = 0x40
+    PRINT  = 0x50
+    INPUT  = 0x51
+    ADD    = 0x60
+    SUB    = 0x61
+    MUL    = 0x62
+    DIV    = 0x63
+    TOINT  = 0x70
+    SUBSTR = 0x71
 
 class ValueTypeTag(Enum):
     Null    = 0
@@ -129,7 +130,7 @@ class Lexer:
 
             if char.isalpha() or char == '_':
                 identifier = self.consume_identifier()
-                if identifier in {'fn', 'var', 'push', 'print', 'input', 'pop', 'add', 'sub', 'mul', 'div', 'cmp', 'return', 'jmp', 'jz', 'jnz', 'toint'}:
+                if identifier in {'fn', 'var', 'push', 'print', 'input', 'pop', 'add', 'sub', 'mul', 'div', 'cmp', 'return', 'jmp', 'jz', 'jnz', 'toint', 'substr'}:
                     self.tokens.append(Token(TokenType.KEYWORD, identifier, self.line))
                 else:
                     self.tokens.append(Token(TokenType.IDENTIFIER, identifier, self.line))
@@ -223,9 +224,9 @@ class Parser:
                 self.pos += 1
                 name = self.consume(TokenType.IDENTIFIER).value
                 return AssignNode(name, None, line)
-            elif token.value in {'print', 'input', 'add', 'sub', 'mul', 'div', 'cmp', 'toint'}:
+            elif token.value in {'print', 'input', 'add', 'sub', 'mul', 'div', 'cmp', 'toint', 'substr'}:
                 self.pos += 1
-                opcode = {'print': Opcode.PRINT, 'input': Opcode.INPUT, 'add': Opcode.ADD, 'sub': Opcode.SUB, 'mul': Opcode.MUL, 'div': Opcode.DIV, 'cmp': Opcode.CMP, 'toint': Opcode.TOINT}[token.value]
+                opcode = {'print': Opcode.PRINT, 'input': Opcode.INPUT, 'add': Opcode.ADD, 'sub': Opcode.SUB, 'mul': Opcode.MUL, 'div': Opcode.DIV, 'cmp': Opcode.CMP, 'toint': Opcode.TOINT, 'substr': Opcode.SUBSTR}[token.value]
                 return SimpleInstructionNode(opcode, line)
             elif token.value in {'jmp', 'jz', 'jnz'}:
                 self.pos += 1

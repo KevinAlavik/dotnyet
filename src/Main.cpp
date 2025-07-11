@@ -17,7 +17,7 @@ constexpr uint8_t NYET_VERSION = 0x01;
 
 Util::Logger logger("Main");
 
-void prog(const std::string& filename) {
+void prog(const std::string& filename, const std::string& args = "") {
     using namespace DotNyet::VM::Core;
 
     std::ifstream file(filename, std::ios::binary);
@@ -43,20 +43,48 @@ void prog(const std::string& filename) {
     std::vector<uint8_t> program(std::istreambuf_iterator<char>(file), {});
     DotNyet::VM::VirtualMachine vm;
     vm.LoadBytecode(std::move(program));
+
+    if (!args.empty()) {
+        vm.GetStack().Push(DotNyet::Types::Value(args));
+    } else {
+        vm.GetStack().Push(DotNyet::Types::Value(std::string()));
+    }
+
     vm.Run();
 }
+
 
 int main(int argc, char* argv[]) {
     Util::Logger logger("Main");
     logger.Info(".NYET v1.0");
 
-    if (argc != 2) {
-        logger.Error("Usage: {} <bytecode file>", argv[0]);
+    if (argc < 2) {
+        logger.Error("Usage: {} <bytecode file> [-- args...]", argv[0]);
         return 1;
     }
 
+    std::string filename;
+    std::string argString;
+
+    bool afterDoubleDash = false;
+    for (int i = 1; i < argc; ++i) {
+        if (!afterDoubleDash) {
+            if (std::strcmp(argv[i], "--") == 0) {
+                afterDoubleDash = true;
+            } else if (filename.empty()) {
+                filename = argv[i];
+            } else {
+                logger.Error("Unexpected argument before --: {}", argv[i]);
+                return 1;
+            }
+        } else {
+            if (!argString.empty()) argString += " ";
+            argString += argv[i];
+        }
+    }
+
     try {
-        prog(argv[1]);
+        prog(filename, argString);
     } catch (const std::exception& e) {
         logger.Error("Exception caught [{}]: {}", demangle(typeid(e).name()).c_str(), e.what());
         return 1;

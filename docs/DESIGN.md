@@ -39,7 +39,7 @@ Opcodes are defined as 1-byte values in the `DotNyet::Bytecode::Opcode` enum. Th
 | `POP`   | `0x02` | Pops a value from the stack and discards it.                                 | None                                                                     |
 | `ADD`   | `0x03` | Pops two values, adds them, and pushes the result.                           | None                                                                     |
 | `SUB`   | `0x04` | Pops two values, subtracts the second from the first, and pushes the result. | None                                                                     |
-| **`CMP`** | **`0x05`** | Pops two values, compares them for equality, and pushes a boolean result. | None                                                                     |
+| `CMP`** | `0x05` | Pops two values, compares them for equality, and pushes a boolean result. | None                                                                     |
 | `DEF`   | `0x10` | Defines a function with a given name.                                        | Name length (uint32_t, 4 bytes) + function name (variable length)         |
 | `CALL`  | `0x11` | Calls a function by name, pushing the return address to the call stack.      | Name length (uint32_t, 4 bytes) + function name (variable length)         |
 | `RET`   | `0x12` | Returns from a function, popping the return address from the call stack.     | None                                                                     |

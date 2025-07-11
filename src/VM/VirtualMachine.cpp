@@ -123,7 +123,10 @@ namespace DotNyet::VM {
                         case Opcode::NOP:
                         case Opcode::POP:
                         case Opcode::ADD:
+                        case Opcode::SUB:
+                        case Opcode::CMP:
                         case Opcode::PRINT:
+                        case Opcode::INPUT:
                         case Opcode::RET:
                             break;
 
@@ -243,8 +246,8 @@ namespace DotNyet::VM {
 
                     case Opcode::SUB: {
                         logger.Debug("SUB");
-                        auto b = stack.Pop();
                         auto a = stack.Pop();
+                        auto b = stack.Pop();
                         logger.Debug("Operands: a = {}, b = {}", a.ToString(), b.ToString());
                         auto result = a - b;
                         logger.Debug("Result: {}", result.ToString());
@@ -254,7 +257,7 @@ namespace DotNyet::VM {
 
                     case Opcode::PRINT: {
                         auto val = stack.Pop();
-                        std::cout << val.ToString() << std::endl;
+                        std::cout << val.ToString();
                         break;
                     }
 
@@ -346,6 +349,38 @@ namespace DotNyet::VM {
                         } else {
                             logger.Debug("JNZ skipped");
                         }
+                        break;
+                    }
+
+                    case Opcode::CMP: {
+                        logger.Debug("CMP");
+                        auto b = stack.Pop();
+                        auto a = stack.Pop();
+                        logger.Debug("Operands: a = {}, b = {}", a.ToString(), b.ToString());
+
+                        if (a.Type() == b.Type()) {
+                            if (a.IsInt() && b.IsInt()) {
+                                stack.Push(Types::Value(a.AsInt() == b.AsInt()));
+                            } else if (a.IsDouble() && b.IsDouble()) {
+                                stack.Push(Types::Value(a.AsDouble() == b.AsDouble()));
+                            } else if (a.IsString() && b.IsString()) {
+                                stack.Push(Types::Value(a.AsString() == b.AsString()));
+                            } else {
+                                throw Core::RuntimeException("Unsupported comparison types");
+                            }
+                        } else {
+                            throw Core::RuntimeException("Cannot compare different types");
+                        }
+                        logger.Debug(stack.Peek().ToString());
+                        break;
+                    }
+
+                    case Opcode::INPUT: {
+                        logger.Debug("INPUT");
+                        std::string input;
+                        std::getline(std::cin, input);
+                        logger.Debug("Result: {}", input);
+                        stack.Push(Types::Value(input));
                         break;
                     }
 

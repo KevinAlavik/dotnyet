@@ -10,6 +10,7 @@ class Opcode(Enum):
     POP   = 0x02
     ADD   = 0x03
     SUB   = 0x04
+    CMP   = 0x05
     DEF   = 0x10
     CALL  = 0x11
     RET   = 0x12
@@ -20,6 +21,7 @@ class Opcode(Enum):
     JNZ   = 0x32
     HALT  = 0x40
     PRINT = 0x50
+    INPUT = 0x51
 
 class ValueTypeTag(Enum):
     Null    = 0
@@ -124,7 +126,7 @@ class Lexer:
 
             if char.isalpha() or char == '_':
                 identifier = self.consume_identifier()
-                if identifier in {'fn', 'var', 'push', 'print', 'pop', 'add', 'sub', 'return', 'jmp', 'jz', 'jnz'}:
+                if identifier in {'fn', 'var', 'push', 'print', 'input', 'pop', 'add', 'sub', 'cmp', 'return', 'jmp', 'jz', 'jnz'}:
                     self.tokens.append(Token(TokenType.KEYWORD, identifier, self.line))
                 else:
                     self.tokens.append(Token(TokenType.IDENTIFIER, identifier, self.line))
@@ -137,6 +139,7 @@ class Lexer:
 
             if char == '"':
                 string = self.consume_string()
+                string = bytes(string, "utf-8").decode("unicode_escape")
                 self.tokens.append(Token(TokenType.STRING, string, self.line))
                 continue
 
@@ -213,9 +216,13 @@ class Parser:
                 self.pos += 1
                 value = self.parse_value()
                 return ReturnNode(value)
-            elif token.value in {'print', 'pop', 'add', 'sub'}:
+            elif token.value == 'pop':
                 self.pos += 1
-                opcode = {'print': Opcode.PRINT, 'pop': Opcode.POP, 'add': Opcode.ADD, 'sub': Opcode.SUB}[token.value]
+                name = self.consume(TokenType.IDENTIFIER).value
+                return AssignNode(name, None, line)
+            elif token.value in {'print', 'input', 'add', 'sub', 'cmp'}:
+                self.pos += 1
+                opcode = {'print': Opcode.PRINT, 'input': Opcode.INPUT, 'add': Opcode.ADD, 'sub': Opcode.SUB, 'cmp': Opcode.CMP}[token.value]
                 return SimpleInstructionNode(opcode, line)
             elif token.value in {'jmp', 'jz', 'jnz'}:
                 self.pos += 1
@@ -398,7 +405,9 @@ class Compiler:
             self.local_var_count += 1
 
         elif isinstance(stmt, AssignNode):
-            self.compile_value(stmt.value, stmt.line)
+            if stmt.value is not None:
+                self.compile_value(stmt.value, stmt.line)
+            # If value is None, assume the value is already on the stack (e.g., from `pop`)
             if stmt.name not in self.local_vars and stmt.name not in self.current_params:
                 raise ValueError(f"Undefined variable at line {stmt.line}: {stmt.name}")
             self.emit_byte(Opcode.STORE.value)
@@ -429,7 +438,7 @@ class Compiler:
             self.labels[stmt.name] = len(self.bytecode)
 
         elif isinstance(stmt, ReturnNode):
-            self.compile_value(stmt.value, 0)  # Line number not used for value compilation
+            self.compile_value(stmt.value, 0)
             self.emit_byte(Opcode.RET.value)
 
     def compile_value(self, value: Union[ASTNode, str, int, float, bool], line: int):

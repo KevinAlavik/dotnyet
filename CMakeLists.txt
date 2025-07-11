@@ -10,9 +10,12 @@ include_directories(include)
 
 file(GLOB_RECURSE DOTNYET_SOURCES
     src/*.cpp
+    src/*.hpp
 )
 
+find_package(fmt REQUIRED)
 add_executable(dotnyet ${DOTNYET_SOURCES})
+target_link_libraries(dotnyet PRIVATE fmt::fmt)
 
 if (WIN32)
     target_compile_definitions(dotnyet PRIVATE UNICODE _UNICODE)

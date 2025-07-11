@@ -23,8 +23,14 @@ namespace DotNyet::VM::Core {
     };
 
     class RuntimeException : public VMException {
-        public:
-            explicit RuntimeException(const std::string& msg)
-                : VMException("RuntimeException: " + msg) {}
-        };
+    public:
+        explicit RuntimeException(const std::string& msg)
+            : VMException("RuntimeException: " + msg) {}
+    };
+
+    class BytecodeFormatException : public VMException {
+    public:
+        explicit BytecodeFormatException(const std::string& msg)
+            : VMException("BytecodeFormatException: " + msg) {}
+    };
 }

@@ -10,6 +10,8 @@ loop_start:
     push "Loop "
     push counter
     add
+    push "\n"
+    add
     print
 
     push counter

@@ -9,18 +9,8 @@
 #include <exception>
 #include <typeinfo>
 #include <cstring>
-#include <cxxabi.h>
 #include <memory>
-
-/* UTIL, TODO: MOVE */
-std::string demangle(const char* mangledName) {
-    int status = 0;
-    std::unique_ptr<char, void(*)(void*)> res{
-        abi::__cxa_demangle(mangledName, nullptr, nullptr, &status),
-        std::free
-    };
-    return (status == 0) ? res.get() : mangledName;
-}
+#include <Util/Demangle.hpp>
 
 constexpr char NYET_MAGIC[4] = {'N', 'Y', 'E', 'T'};
 constexpr uint8_t NYET_VERSION = 0x01;

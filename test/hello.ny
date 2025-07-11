@@ -1,4 +1,4 @@
 fn main()
-    push "Hello, World!"
+    push "Hello, World!\n"
     print
     return 0

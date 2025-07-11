@@ -49,6 +49,8 @@ namespace DotNyet::Types {
         double AsDouble() const;
         bool AsBool() const;
         const std::string& AsString() const;
+        
+        bool IsTruthy() const;
     };
 
     Value operator+(const Value& lhs, const Value& rhs);

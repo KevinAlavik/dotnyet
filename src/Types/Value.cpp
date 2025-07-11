@@ -73,6 +73,17 @@ namespace DotNyet::Types {
         return std::get<std::string>(data);
     }
 
+    bool Value::IsTruthy() const {
+        switch (Type()) {
+            case ValueType::Null: return false;
+            case ValueType::Boolean: return data.index() == 3 && std::get<bool>(data);
+            case ValueType::Integer: return data.index() == 1 && std::get<int64_t>(data) != 0;
+            case ValueType::Double: return data.index() == 2 && std::get<double>(data) != 0.0;
+            case ValueType::String: return data.index() == 4 && !std::get<std::string>(data).empty();
+            default: return false;
+        }
+    }
+    
     Value operator+(const Value& lhs, const Value& rhs) {
         if (lhs.IsNull() || rhs.IsNull()) {
             throw DotNyet::VM::Core::RuntimeException("Cannot add null values");

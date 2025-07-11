@@ -1,8 +1,7 @@
-push "Welcome to the .NYET UTF-8 test :^)"
-print
+fn test()
+    print "test"
+    return
 
-# UTF-8 Test
-push "𝓗𝓮𝓵𝓵𝓸"
-push "　𝓦𝓸𝓻𝓵𝓭"
-add
-print
+fn start()
+    test()
+    return

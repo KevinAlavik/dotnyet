@@ -13,7 +13,16 @@ file(GLOB_RECURSE DOTNYET_SOURCES
     src/*.hpp
 )
 
-find_package(fmt REQUIRED)
+include(FetchContent)
+
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG        11.2.0 
+)
+
+FetchContent_MakeAvailable(fmt)
+
 add_executable(dotnyet ${DOTNYET_SOURCES})
 target_link_libraries(dotnyet PRIVATE fmt::fmt)
 

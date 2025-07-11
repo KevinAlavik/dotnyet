@@ -8,11 +8,7 @@ namespace DotNyet::Bytecode {
         NOP   = 0x00,
         PUSH  = 0x01,
         POP   = 0x02,
-
-        // Math
-        ADD   = 0x03,
-        SUB   = 0x04,
-        CMP   = 0x05,
+        CMP   = 0x03,
 
         // Control flow / function call
         DEF   = 0x10,
@@ -33,7 +29,11 @@ namespace DotNyet::Bytecode {
 
         // I/O opcodes
         PRINT = 0x50,
-        INPUT = 0x51
+        INPUT = 0x51,
+
+        // Math
+        ADD   = 0x60,
+        SUB   = 0x61
     };
 
     enum class ValueTypeTag : uint8_t {

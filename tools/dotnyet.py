@@ -8,9 +8,7 @@ class Opcode(Enum):
     NOP   = 0x00
     PUSH  = 0x01
     POP   = 0x02
-    ADD   = 0x03
-    SUB   = 0x04
-    CMP   = 0x05
+    CMP   = 0x03
     DEF   = 0x10
     CALL  = 0x11
     RET   = 0x12
@@ -22,6 +20,8 @@ class Opcode(Enum):
     HALT  = 0x40
     PRINT = 0x50
     INPUT = 0x51
+    ADD   = 0x60
+    SUB   = 0x61
 
 class ValueTypeTag(Enum):
     Null    = 0

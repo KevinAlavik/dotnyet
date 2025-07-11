@@ -70,11 +70,7 @@ namespace Util {
     private:
         std::string_view scope;
         inline static std::mutex outputMutex;
-        #ifdef DEBUG
         inline static Level currentLevel = Level::Debug;
-        #else
-        inline static Level currentLevel = Level::Info;
-        #endif
 
         static constexpr std::string_view levelPrefix(Level level) {
             switch (level) {

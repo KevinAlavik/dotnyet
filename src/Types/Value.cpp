@@ -92,13 +92,29 @@ namespace DotNyet::Types {
         if (lhs.IsInt() && rhs.IsInt()) {
             return Value(lhs.AsInt() + rhs.AsInt());
         }
+        
+        if (lhs.IsDouble() && rhs.IsDouble()) {
+            return Value(lhs.AsDouble() + rhs.AsDouble());
+        }
 
+        if (lhs.IsInt() && rhs.IsDouble() || lhs.IsDouble() && rhs.IsInt()) {
+            return Value(lhs.AsDouble() + rhs.AsDouble());
+        }
+        
         if (lhs.IsString() && rhs.IsString()) {
             return Value(lhs.AsString() + rhs.AsString());
         }
 
         if (lhs.IsString() && rhs.IsInt()) {
             return Value(lhs.AsString() + std::to_string(rhs.AsInt()));
+        }
+        
+        if (lhs.IsString() && rhs.IsDouble()) {
+            return Value(lhs.AsString() + std::to_string(rhs.AsDouble()));
+        }
+
+        if (lhs.IsDouble() && rhs.IsString()) {
+            return Value(std::to_string(lhs.AsDouble()) + rhs.AsString());
         }
 
         if (lhs.IsInt() && rhs.IsString()) {
@@ -107,6 +123,21 @@ namespace DotNyet::Types {
 
         throw DotNyet::VM::Core::RuntimeException(fmt::format(
             "Unsupported addition operand types: {} and {}",
+            lhs.Type(), rhs.Type()
+        ));
+    }
+
+    Value operator-(const Value& lhs, const Value& rhs) {
+        if (lhs.IsNull() || rhs.IsNull()) {
+            throw DotNyet::VM::Core::RuntimeException("Cannot subtract null values");
+        }
+
+        if (lhs.IsInt() && rhs.IsInt()) {
+            return Value(lhs.AsInt() - rhs.AsInt());
+        }
+
+        throw DotNyet::VM::Core::RuntimeException(fmt::format(
+            "Unsupported subtraction operand types: {} and {}",
             lhs.Type(), rhs.Type()
         ));
     }

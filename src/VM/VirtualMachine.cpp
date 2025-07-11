@@ -149,8 +149,8 @@ namespace DotNyet::VM {
         }
 
         // Simulate CALL to 'main'
-        callStack.push_back(bytecode.size()); // Push end of bytecode as return address
-        ip = it->second; // Set IP to main function
+        callStack.push_back(bytecode.size());
+        ip = it->second;
 
         while (ip < bytecode.size()) {
             using namespace DotNyet::Bytecode;
@@ -241,6 +241,17 @@ namespace DotNyet::VM {
                         break;
                     }
 
+                    case Opcode::SUB: {
+                        logger.Debug("SUB");
+                        auto b = stack.Pop();
+                        auto a = stack.Pop();
+                        logger.Debug("Operands: a = {}, b = {}", a.ToString(), b.ToString());
+                        auto result = a - b;
+                        logger.Debug("Result: {}", result.ToString());
+                        stack.Push(result);
+                        break;
+                    }
+
                     case Opcode::PRINT: {
                         auto val = stack.Pop();
                         std::cout << val.ToString() << std::endl;
@@ -278,7 +289,8 @@ namespace DotNyet::VM {
 
                         ip = callStack.back();
                         callStack.pop_back();
-                        logger.Debug("RET to {}", ip);
+                        Types::Value val = stack.Peek(); // Return code shouldve been pushed to stack
+                        logger.Debug("RET to {}, return value: '{}'", ip, val.ToString());
                         break;
                     }
 

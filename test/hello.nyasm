@@ -1,12 +1,6 @@
 fn main()
-    var hello
-    var world
-    hello = "Hello "
-    world = "World"
-
-    push hello
-    push world
-    add
-
+    push "test"
     print
-    return
+
+    # Return
+    return 69

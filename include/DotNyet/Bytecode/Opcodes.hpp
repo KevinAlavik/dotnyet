@@ -9,9 +9,7 @@ namespace DotNyet::Bytecode {
         PUSH  = 0x01,
         POP   = 0x02,
         ADD   = 0x03,
-
-        // I/O opcodes
-        PRINT = 0x04,
+        SUB   = 0x04,
 
         // Control flow / function call
         DEF   = 0x10,
@@ -28,7 +26,10 @@ namespace DotNyet::Bytecode {
         JNZ   = 0x32,
 
         // Miscellaneous
-        HALT  = 0x40
+        HALT  = 0x40,
+
+        // I/O opcodes
+        PRINT = 0x50,
     };
 
     enum class ValueTypeTag : uint8_t {

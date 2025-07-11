@@ -9,7 +9,7 @@ class Opcode(Enum):
     PUSH  = 0x01
     POP   = 0x02
     ADD   = 0x03
-    PRINT = 0x04
+    SUB   = 0x04
     DEF   = 0x10
     CALL  = 0x11
     RET   = 0x12
@@ -19,6 +19,7 @@ class Opcode(Enum):
     JZ    = 0x31
     JNZ   = 0x32
     HALT  = 0x40
+    PRINT = 0x50
 
 class ValueTypeTag(Enum):
     Null    = 0
@@ -94,6 +95,10 @@ class LabelNode(ASTNode):
         self.name = name
         self.line = line
 
+class ReturnNode(ASTNode):
+    def __init__(self, value: Union[str, int, float, bool]):
+        self.value = value
+
 class Lexer:
     def __init__(self, source: str):
         self.source = source
@@ -119,7 +124,7 @@ class Lexer:
 
             if char.isalpha() or char == '_':
                 identifier = self.consume_identifier()
-                if identifier in {'fn', 'var', 'push', 'print', 'pop', 'add', 'return', 'jmp', 'jz', 'jnz'}:
+                if identifier in {'fn', 'var', 'push', 'print', 'pop', 'add', 'sub', 'return', 'jmp', 'jz', 'jnz'}:
                     self.tokens.append(Token(TokenType.KEYWORD, identifier, self.line))
                 else:
                     self.tokens.append(Token(TokenType.IDENTIFIER, identifier, self.line))
@@ -204,9 +209,13 @@ class Parser:
                 self.pos += 1
                 value = self.parse_value()
                 return PushNode(value, line)
-            elif token.value in {'print', 'pop', 'add', 'return'}:
+            elif token.value == 'return':
                 self.pos += 1
-                opcode = {'print': Opcode.PRINT, 'pop': Opcode.POP, 'add': Opcode.ADD, 'return': Opcode.RET}[token.value]
+                value = self.parse_value()
+                return ReturnNode(value)
+            elif token.value in {'print', 'pop', 'add', 'sub'}:
+                self.pos += 1
+                opcode = {'print': Opcode.PRINT, 'pop': Opcode.POP, 'add': Opcode.ADD, 'sub': Opcode.SUB}[token.value]
                 return SimpleInstructionNode(opcode, line)
             elif token.value in {'jmp', 'jz', 'jnz'}:
                 self.pos += 1
@@ -418,6 +427,10 @@ class Compiler:
 
         elif isinstance(stmt, LabelNode):
             self.labels[stmt.name] = len(self.bytecode)
+
+        elif isinstance(stmt, ReturnNode):
+            self.compile_value(stmt.value, 0)  # Line number not used for value compilation
+            self.emit_byte(Opcode.RET.value)
 
     def compile_value(self, value: Union[ASTNode, str, int, float, bool], line: int):
         if isinstance(value, ASTNode):

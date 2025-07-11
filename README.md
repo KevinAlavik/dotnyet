@@ -1,2 +1,2 @@
 # dotnyet
-A minimalist bytecode stack-VM written in C++
+A minimalist bytecode VM written in C++

@@ -142,6 +142,61 @@ namespace DotNyet::Types {
         ));
     }
 
+    Value operator*(const Value& lhs, const Value& rhs) {
+        if (lhs.IsNull() || rhs.IsNull()) {
+            throw DotNyet::VM::Core::RuntimeException("Cannot multiply null values");
+        }
+
+        if (lhs.IsInt() && rhs.IsInt()) {
+            return Value(lhs.AsInt() * rhs.AsInt());
+        }
+
+        if (lhs.IsDouble() && rhs.IsDouble()) {
+            return Value(lhs.AsDouble() * rhs.AsDouble());
+        }
+
+        if ((lhs.IsInt() && rhs.IsDouble()) || (lhs.IsDouble() && rhs.IsInt())) {
+            return Value(lhs.AsDouble() * rhs.AsDouble());
+        }
+
+        throw DotNyet::VM::Core::RuntimeException(fmt::format(
+            "Unsupported multiplication operand types: {} and {}",
+            lhs.Type(), rhs.Type()
+        ));
+    }
+
+    Value operator/(const Value& lhs, const Value& rhs) {
+        if (lhs.IsNull() || rhs.IsNull()) {
+            throw DotNyet::VM::Core::RuntimeException("Cannot divide null values");
+        }
+
+        if (lhs.IsInt() && rhs.IsInt()) {
+            if (rhs.AsInt() == 0) {
+                throw DotNyet::VM::Core::RuntimeException("Division by zero");
+            }
+            return Value(lhs.AsInt() / rhs.AsInt());
+        }
+
+        if (lhs.IsDouble() && rhs.IsDouble()) {
+            if (rhs.AsDouble() == 0.0) {
+                throw DotNyet::VM::Core::RuntimeException("Division by zero");
+            }
+            return Value(lhs.AsDouble() / rhs.AsDouble());
+        }
+
+        if ((lhs.IsInt() && rhs.IsDouble()) || (lhs.IsDouble() && rhs.IsInt())) {
+            if (rhs.AsDouble() == 0.0) {
+                throw DotNyet::VM::Core::RuntimeException("Division by zero");
+            }
+            return Value(lhs.AsDouble() / rhs.AsDouble());
+        }
+
+        throw DotNyet::VM::Core::RuntimeException(fmt::format(
+            "Unsupported division operand types: {} and {}",
+            lhs.Type(), rhs.Type()
+        ));
+    }
+
     std::ostream& operator<<(std::ostream& os, const Value& val) {
         os << val.ToString();
         return os;

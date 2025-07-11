@@ -55,6 +55,8 @@ namespace DotNyet::Types {
 
     Value operator+(const Value& lhs, const Value& rhs);
     Value operator-(const Value& lhs, const Value& rhs);
+    Value operator*(const Value& lhs, const Value& rhs);
+    Value operator/(const Value& lhs, const Value& rhs);
     std::ostream& operator<<(std::ostream& os, const Value& val);
 }
 

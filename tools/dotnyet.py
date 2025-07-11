@@ -22,6 +22,9 @@ class Opcode(Enum):
     INPUT = 0x51
     ADD   = 0x60
     SUB   = 0x61
+    MUL   = 0x62
+    DIV   = 0x63
+    TOINT = 0x70
 
 class ValueTypeTag(Enum):
     Null    = 0
@@ -126,7 +129,7 @@ class Lexer:
 
             if char.isalpha() or char == '_':
                 identifier = self.consume_identifier()
-                if identifier in {'fn', 'var', 'push', 'print', 'input', 'pop', 'add', 'sub', 'cmp', 'return', 'jmp', 'jz', 'jnz'}:
+                if identifier in {'fn', 'var', 'push', 'print', 'input', 'pop', 'add', 'sub', 'mul', 'div', 'cmp', 'return', 'jmp', 'jz', 'jnz', 'toint'}:
                     self.tokens.append(Token(TokenType.KEYWORD, identifier, self.line))
                 else:
                     self.tokens.append(Token(TokenType.IDENTIFIER, identifier, self.line))
@@ -220,9 +223,9 @@ class Parser:
                 self.pos += 1
                 name = self.consume(TokenType.IDENTIFIER).value
                 return AssignNode(name, None, line)
-            elif token.value in {'print', 'input', 'add', 'sub', 'cmp'}:
+            elif token.value in {'print', 'input', 'add', 'sub', 'mul', 'div', 'cmp', 'toint'}:
                 self.pos += 1
-                opcode = {'print': Opcode.PRINT, 'input': Opcode.INPUT, 'add': Opcode.ADD, 'sub': Opcode.SUB, 'cmp': Opcode.CMP}[token.value]
+                opcode = {'print': Opcode.PRINT, 'input': Opcode.INPUT, 'add': Opcode.ADD, 'sub': Opcode.SUB, 'mul': Opcode.MUL, 'div': Opcode.DIV, 'cmp': Opcode.CMP, 'toint': Opcode.TOINT}[token.value]
                 return SimpleInstructionNode(opcode, line)
             elif token.value in {'jmp', 'jz', 'jnz'}:
                 self.pos += 1

@@ -33,7 +33,12 @@ namespace DotNyet::Bytecode {
 
         // Math
         ADD   = 0x60,
-        SUB   = 0x61
+        SUB   = 0x61,
+        MUL   = 0x62,
+        DIV   = 0x63,
+
+        // Misc
+        TOINT = 0x70,
     };
 
     enum class ValueTypeTag : uint8_t {

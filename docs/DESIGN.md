@@ -32,25 +32,28 @@ Each instruction begins with a 1-byte opcode, followed by zero or more operands.
 ## Opcodes
 Opcodes are defined as 1-byte values in the `DotNyet::Bytecode::Opcode` enum. The following table lists all supported opcodes, their hexadecimal values, descriptions, and operand formats.
 
-| Opcode  | Hex    | Description                                                                 | Operands                                                                 |
-|---------|--------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| `NOP`   | `0x00` | No operation; does nothing.                                                 | None                                                                     |
-| `PUSH`  | `0x01` | Pushes a value onto the stack.                                              | `ValueTypeTag` (1 byte) + value data (variable length, see below)         |
+| Opcode  | Hex    | Description                                                                  | Operands                                                                 |
+|---------|--------|------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `NOP`   | `0x00` | No operation; does nothing.                                                  | None                                                                     |
+| `PUSH`  | `0x01` | Pushes a value onto the stack.                                               | `ValueTypeTag` (1 byte) + value data (variable length, see below)        |
 | `POP`   | `0x02` | Pops a value from the stack and discards it.                                 | None                                                                     |
-| `ADD`   | `0x03` | Pops two values, adds them, and pushes the result.                           | None                                                                     |
-| `SUB`   | `0x04` | Pops two values, subtracts the second from the first, and pushes the result. | None                                                                     |
-| `CMP`** | `0x05` | Pops two values, compares them for equality, and pushes a boolean result. | None                                                                     |
-| `DEF`   | `0x10` | Defines a function with a given name.                                        | Name length (uint32_t, 4 bytes) + function name (variable length)         |
-| `CALL`  | `0x11` | Calls a function by name, pushing the return address to the call stack.      | Name length (uint32_t, 4 bytes) + function name (variable length)         |
+| `CMP`** | `0x03` | Pops two values, compares them for equality, and pushes a boolean result.    | None                                                                     |
+| `DEF`   | `0x10` | Defines a function with a given name.                                        | Name length (uint32_t, 4 bytes) + function name (variable length)        |
+| `CALL`  | `0x11` | Calls a function by name, pushing the return address to the call stack.      | Name length (uint32_t, 4 bytes) + function name (variable length)        |
 | `RET`   | `0x12` | Returns from a function, popping the return address from the call stack.     | None                                                                     |
 | `STORE` | `0x20` | Pops a value and stores it at a specified memory address.                    | Address (uint32_t, 4 bytes)                                              |
 | `LOAD`  | `0x21` | Pushes the value stored at a specified memory address onto the stack.        | Address (uint32_t, 4 bytes)                                              |
 | `JMP`   | `0x30` | Unconditionally jumps to a specified bytecode position.                      | Target address (uint32_t, 4 bytes)                                       |
 | `JZ`    | `0x31` | Pops a value; jumps to the target if the value is not truthy.                | Target address (uint32_t, 4 bytes)                                       |
 | `JNZ`   | `0x32` | Pops a value; jumps to the target if the value is truthy.                    | Target address (uint32_t, 4 bytes)                                       |
-| `HALT`  | `0x40` | Stops execution of the program.                                             | None                                                                     |
+| `HALT`  | `0x40` | Stops execution of the program.                                              | None                                                                     |
 | `PRINT` | `0x50` | Pops a value and prints it to the console.                                   | None                                                                     |
-| **`INPUT`** | **`0x51`** | Reads a line of input from the console and pushes it as a string.         | None                                                                     |
+| `INPUT` | `0x51` | Reads a line of input from the console and pushes it as a string.            | None                                                                     |
+| `ADD`   | `0x60` | Pops two values, adds them, and pushes the result.                           | None                                                                     |
+| `SUB`   | `0x61` | Pops two values, subtracts the second from the first, and pushes the result. | None                                                                     |
+| `MUL`   | `0x62` | Pops two values, multiplies them, and pushes the result.                     | None                                                                     |
+| `DIV`   | `0x61` | Pops two values, divides the second from the first, and pushes the result.   | None                                                                     |
+| `TOINT` | `0x70` | Pops a value from the stack then converts it to an int and pushes the result.| None                                                                     |
 
 ### Operand Details
 - **uint32_t**: A 4-byte unsigned integer, stored in little-endian byte order.

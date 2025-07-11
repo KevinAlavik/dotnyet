@@ -122,12 +122,15 @@ namespace DotNyet::VM {
                         case Opcode::HALT:
                         case Opcode::NOP:
                         case Opcode::POP:
-                        case Opcode::ADD:
-                        case Opcode::SUB:
                         case Opcode::CMP:
                         case Opcode::PRINT:
                         case Opcode::INPUT:
                         case Opcode::RET:
+                        case Opcode::ADD:
+                        case Opcode::SUB:
+                        case Opcode::MUL:
+                        case Opcode::DIV:
+                        case Opcode::TOINT:
                             break;
 
                         default:
@@ -250,6 +253,28 @@ namespace DotNyet::VM {
                         auto b = stack.Pop();
                         logger.Debug("Operands: a = {}, b = {}", a.ToString(), b.ToString());
                         auto result = a - b;
+                        logger.Debug("Result: {}", result.ToString());
+                        stack.Push(result);
+                        break;
+                    }
+
+                    case Opcode::MUL: {
+                        logger.Debug("MUL");
+                        auto a = stack.Pop();
+                        auto b = stack.Pop();
+                        logger.Debug("Operands: a = {}, b = {}", a.ToString(), b.ToString());
+                        auto result = a * b;
+                        logger.Debug("Result: {}", result.ToString());
+                        stack.Push(result);
+                        break;
+                    }
+
+                    case Opcode::DIV: {
+                        logger.Debug("DIV");
+                        auto a = stack.Pop();
+                        auto b = stack.Pop();
+                        logger.Debug("Operands: a = {}, b = {}", a.ToString(), b.ToString());
+                        auto result = a / b;
                         logger.Debug("Result: {}", result.ToString());
                         stack.Push(result);
                         break;
@@ -381,6 +406,26 @@ namespace DotNyet::VM {
                         std::getline(std::cin, input);
                         logger.Debug("Result: {}", input);
                         stack.Push(Types::Value(input));
+                        break;
+                    }
+
+                    case Opcode::TOINT: {
+                        logger.Debug("TOINT");
+                        Types::Value val = stack.Pop();
+                        if (val.IsDouble()) {
+                            stack.Push(Types::Value(static_cast<int64_t>(val.AsDouble())));
+                        } else if (val.IsString()) {
+                            try {
+                                int64_t intValue = std::stoll(val.AsString());
+                                stack.Push(Types::Value(intValue));
+                            } catch (const std::invalid_argument&) {
+                                throw Core::RuntimeException("Invalid string for conversion to int");
+                            }
+                        } else if (val.IsInt()) {
+                            stack.Push(val);
+                        } else {
+                            throw Core::RuntimeException("Unsupported type for TOINT");
+                        }
                         break;
                     }
 

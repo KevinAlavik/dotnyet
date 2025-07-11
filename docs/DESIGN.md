@@ -30,7 +30,7 @@ The header is a 5-byte sequence at the start of every .NYET bytecode file, ensur
 Each instruction begins with a 1-byte opcode, followed by zero or more operands. The instruction pointer (IP) advances sequentially, with operands specifying additional data such as values, function names, or jump targets.
 
 ## Opcodes
-Opcodes are defined as 1-byte values in the `DotNyet::Bytecode::Opcode` enum. The following table lists all supported opcodes, their hexadecimal values, descriptions, and operand formats. **Changes**: Added `CMP` (0x05) and `INPUT` (0x51) opcodes.
+Opcodes are defined as 1-byte values in the `DotNyet::Bytecode::Opcode` enum. The following table lists all supported opcodes, their hexadecimal values, descriptions, and operand formats.
 
 | Opcode  | Hex    | Description                                                                 | Operands                                                                 |
 |---------|--------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------|

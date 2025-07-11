@@ -39,7 +39,7 @@ namespace Util {
             std::string color = levelColor(level);
             std::string resetColor = "\033[0m";
 
-            std::cout << color
+            std::cerr << color
                 << "[" << timeStr << "] "
                 << "[" << prefix << "] "
                 << "[" << scope << "] "
@@ -70,7 +70,7 @@ namespace Util {
     private:
         std::string_view scope;
         inline static std::mutex outputMutex;
-        inline static Level currentLevel = Level::Debug;
+        inline static Level currentLevel = Level::Info;
 
         static constexpr std::string_view levelPrefix(Level level) {
             switch (level) {

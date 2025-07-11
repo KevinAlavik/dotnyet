@@ -1,7 +1,12 @@
-fn test()
-    print "test"
-    return
+fn main()
+    var hello
+    var world
+    hello = "Hello "
+    world = "World"
 
-fn start()
-    test()
+    push hello
+    push world
+    add
+
+    print
     return

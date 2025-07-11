@@ -142,15 +142,15 @@ namespace DotNyet::VM {
     void VirtualMachine::Run() {
         logger.Info("Starting execution with {} bytes of bytecode", bytecode.size());
 
-        // Check for 'start' function
-        auto it = functionTable.find("start");
+        // Check for 'main' function
+        auto it = functionTable.find("main");
         if (it == functionTable.end()) {
-            throw Core::RuntimeException("No 'start' function defined");
+            throw Core::RuntimeException("No 'main' function defined");
         }
 
-        // Simulate CALL to 'start'
+        // Simulate CALL to 'main'
         callStack.push_back(bytecode.size()); // Push end of bytecode as return address
-        ip = it->second; // Set IP to start function
+        ip = it->second; // Set IP to main function
 
         while (ip < bytecode.size()) {
             using namespace DotNyet::Bytecode;

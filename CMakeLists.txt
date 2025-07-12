@@ -23,6 +23,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(fmt)
 
+execute_process(COMMAND git rev-parse --short HEAD OUTPUT_VARIABLE GIT_HASH OUTPUT_STRIP_TRAILING_WHITESPACE)
+add_definitions(-DGIT_HASH="${GIT_HASH}")
+
 add_executable(dotnyet ${DOTNYET_SOURCES})
 target_link_libraries(dotnyet PRIVATE fmt::fmt)
 
